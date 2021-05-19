@@ -1,0 +1,26 @@
+<table>
+    <thead>
+        <tr>
+        <th> تصویر </th>
+        <th> نام </th>
+        <th> نام خانوادگی </th>
+        <th> تاریخ تولد </th>
+        <th> عنوان افتخار </th>
+        <th> سال افتخار </th>
+        <th> سطح </th>
+        <th> دسته بندی </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <th><img src="{{ achievement.owner.photo.url }}" alt=""></th>
+        <th>{{ achievement.owner.first_name }}</th>
+        <th>{{ achievement.owner.last_name }}</th>
+        <th>{{ achievement.owner.birthday }}</th>
+        <th>{{ achievement.title }}</th>
+        <th>{{ achievement.year }}</th>
+        <th>{{ achievement.level }}</th>
+        <th>{{ achievement.field }}</th>
+        </tr>
+    </tbody>
+</table>

@@ -5,4 +5,5 @@ app_name = "base"
 urlpatterns = [
     path('', index, name="index"),
     path('detail/<int:id>', detail, name="detail"),
+    path('manging/', detail, name="detail"),
 ]
