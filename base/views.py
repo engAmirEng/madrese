@@ -66,9 +66,11 @@ def manage(request, model_name=""):
             }
             return render(request, "base/managing_achievement.html", content)
         elif model_name == "student":
+            searched_year = int(request.POST["birthday"]) if request.POST["birthday"] else 1
             for i in student_list:
+                birth = i.birthday.year if request.POST["birthday"] else 0
                 if request.POST["first_name"]  in i.first_name and (request.POST["last_name"])  in i.last_name and \
-                    int(request.POST["birthday"]) > i.birthday.year:
+                    searched_year > birth:
                     searched_obj.append(i)
             content = {
                 "student":searched_obj
@@ -120,28 +122,28 @@ def form(request, model_name, id):
             filled_form = StudentForm(request.POST, request.FILES, instance=get_object_or_404(Student, id=id))
             if filled_form.is_valid():
                 filled_form.save()
-                massage = "با موفقیت تغغیر یافت"
+                massage = "با موفقیت تغییر یافت"
             else:
                 massage = "خطا، اطلاعات وارد شده معتبر نمی باشد."
         elif model_name == "new_student":
             filled_form = StudentForm(request.POST, request.FILES)
             if filled_form.is_valid():
                 filled_form.save()
-                massage = "با موفقیت تغغیر یافت"
+                massage = "با موفقیت تغییر یافت"
             else:
                 massage = "خطا، اطلاعات وارد شده معتبر نمی باشد."
         elif model_name == "achievement":
             filled_form = AchievementForm(request.POST, request.FILES, instance=get_object_or_404(Achievement, id=id))
             if filled_form.is_valid():
                 filled_form.save()
-                massage = "با موفقیت تغغیر یافت"
+                massage = "با موفقیت تغییر یافت"
             else:
                 massage = "خطا، اطلاعات وارد شده معتبر نمی باشد"
         elif model_name == "new_achievement":
             filled_form = AchievementForm(request.POST, request.FILES)
             if filled_form.is_valid():
                 filled_form.save()
-                massage = "با موفقیت تغغیر یافت"
+                massage = "با موفقیت تغییر یافت"
             else:
                 massage = "خطا، اطلاعات وارد شده معتبر نمی باشد"
         content = {
