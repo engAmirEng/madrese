@@ -13,7 +13,7 @@ class Student(models.Model):
 
 
 class Achievement(models.Model):
-    owner = models.ForeignKey("Student" , on_delete=models.DO_NOTHING)
+    owner = models.ForeignKey("Student" , on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
 
     y_CHOICES = ((i, i) for i in range(2000, timezone.now().year))

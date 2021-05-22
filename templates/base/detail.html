@@ -9,6 +9,10 @@
         <th> سال افتخار </th>
         <th> سطح </th>
         <th> دسته بندی </th>
+        <th> دوره </th>
+        <th> تصویر مدرک </th>
+        <th> لینک ها  </th>
+        <th> توضیحات  </th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +25,10 @@
         <th>{{ achievement.year }}</th>
         <th>{{ achievement.level }}</th>
         <th>{{ achievement.field }}</th>
+        <th>{{ achievement.dore }}</th>
+        <th><img src="{{ achievement.pic.url }}" alt=""></th>
+        <th>{{ achievement.video_link }}</th>
+        <th>{{ achievement.detail }}</th>
         </tr>
     </tbody>
 </table>

@@ -8,6 +8,7 @@ class StudentAdmin(admin.ModelAdmin):
 @admin.register(Achievement)
 class AchievementAdmin(admin.ModelAdmin):
     list_display = [i.name for i in Achievement._meta.get_fields()]
+    list_display.remove("detail")
 
 # admin.site.register(Student)
 # admin.site.register(Achievement)
