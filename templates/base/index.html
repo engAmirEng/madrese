@@ -1,14 +1,16 @@
+{% extends '../partial/simpleBootstrap.html' %}
+{% block content %}
 <table>
     <thead>
         <form action="" method="post">
             {% csrf_token %} 
         <tr>
-        <th> <input type="submit" value=" جست و جو"> </th>
-        <th> <input type="search" name="first_name"> </th>
-        <th> <input type="search" name="last_name"> </th>
-        <th> <input type="search" name="title"> </th>
-        <th> <input type="search" name="year"> </th>
-        <th> <input type="search" name="level"> </th>
+        <th> <input class="btn btn-primary" type="submit" value=" جست و جو"> </th>
+        <th> <input class="form-control" type="search" name="first_name"> </th>
+        <th> <input class="form-control" type="search" name="last_name"> </th>
+        <th> <input class="form-control" type="search" name="title"> </th>
+        <th> <input class="form-control" type="search" name="year"> </th>
+        <th> <input class="form-control" type="search" name="level"> </th>
         </tr>
         </form>
     </thead>
@@ -31,9 +33,10 @@
         <th>{{ ar.title }}</th>
         <th>{{ ar.year }}</th>
         <th>{{ ar.level }}</th>
-        <th> <a href="{% url 'base:detail' ar.id %}"> بیشتر </a> </th>
+        <th> <a class="btn btn-info" role="button" href="{% url 'base:detail' ar.id %}"> بیشتر </a> </th>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<a href="{% url 'base:manage' 'index' %}"><button><h2> پنل مدیریت </h2></button></a>
+<a href="{% url 'base:manage' 'index' %}"><button class="btn btn-primary" role="button"><h2> پنل مدیریت </h2></button></a>
+{% endblock content %}

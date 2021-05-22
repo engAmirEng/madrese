@@ -1,7 +1,9 @@
+{% extends '../partial/simpleBootstrap.html' %}
+{% block content %}
 <h1> managing students</h1>
 <form action="" method="post">
 {% csrf_token %}
-<th> <input type="submit" value=" جست و جو"> </th>
+<th> <input class="btn btn-primary" type="submit" value=" جست و جو"> </th>
 <table>
     <thead>
         <tr>
@@ -12,9 +14,9 @@
         </tr>
     </thead>
     <thead>
-        <th> <input type="search" name="first_name"> </th>
-        <th> <input type="search" name="last_name"> </th>
-        <th> <input type="search" name="birthday"> </th>
+        <th> <input class="form-control" type="search" name="first_name"> </th>
+        <th> <input class="form-control" type="search" name="last_name"> </th>
+        <th> <input class="form-control" type="search" name="birthday"> </th>
 </form>
     </thead>
     <tbody>
@@ -24,12 +26,13 @@
             <th>{{st.last_name}}</th>
             <th>{{st.birthday}}</th>
             <th><img src="{{ st.photo.url }}" alt=""></th>
-            <th><th> <a href="{% url 'base:form' 'student' st.id %}"> ویرایش </a> </th></th>
-            <th><th> <a href="{% url 'base:delete' 'student' st.id %}"> حذف </a> </th></th>
+            <th><th> <a class="btn btn-primary" href="{% url 'base:form' 'student' st.id %}"> ویرایش </a> </th></th>
+            <th><th> <a class="btn btn-danger" href="{% url 'base:delete' 'student' st.id %}"> حذف </a> </th></th>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <form action="{% url 'base:form' 'new_student' 0 %}" method="get">
-    <input type="submit" value=" ثبت رکورد جدید ">
+    <input class="btn btn-primary" type="submit" value=" ثبت رکورد جدید ">
 </form>
+{% endblock content %}
