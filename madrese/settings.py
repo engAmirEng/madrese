@@ -9,7 +9,9 @@ SECRET_KEY = 'y3%68lw6@qat(9r*9m1txc$6wn&2xs77jz38d08rjxyo2%=_#&'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "https://madrese.herokuapp.com/"
+    ]
 
 
 INSTALLED_APPS = [
