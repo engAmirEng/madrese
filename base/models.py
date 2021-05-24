@@ -19,20 +19,20 @@ class Achievement(models.Model):
     y_CHOICES = ((i, i) for i in range(2000, timezone.now().year))
     year = models.IntegerField(choices=y_CHOICES)
 
-    f_CHOICES = (("parvareshi","پرورشی"), 
-                ("amoozeshi","آموزشی"), 
-                ("pajooheshi","پژوهشی"), 
-                ("varzeshi","ورزشی"))
+    f_CHOICES = (("پرورشی","پرورشی"), 
+                ("آموزشی","آموزشی"), 
+                ("پژوهشی","پژوهشی"), 
+                ("پژوهشی","ورزشی"))
     field = models.CharField(max_length=50, choices=f_CHOICES)
 
-    v_CHOICES = (("madrese","مدرسه"), 
-                ("nahie","ناحیه"), 
-                ("shahr","شهر"), 
-                ("ostan","استان"),
-                ("keshvar","کشور"),
-                ("beinolmelel","بین الملل"))
+    v_CHOICES = (("مدرسه","مدرسه"), 
+                ("ناحیه","ناحیه"), 
+                ("شهر","شهر"), 
+                ("استان","استان"),
+                ("کشور","کشور"),
+                ("بین الملل","بین الملل"))
     level = models.CharField(max_length=50, choices=v_CHOICES)
-    dore = models.CharField(max_length=50, choices=(("aval","اول"), ("dovom", "دوم")))
+    dore = models.CharField(max_length=50, choices=(("اول","اول"), ("دوم", "دوم")))
     pic = models.ImageField(upload_to="photoes/achievement/%Y/%m/%d", blank=True)
     video_link = models.CharField(max_length=255, blank=True)
     detail = models.TextField(max_length=1024, blank=True)

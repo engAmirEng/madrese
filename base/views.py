@@ -6,6 +6,19 @@ from django.http import Http404
 from .models import Achievement, Student
 
 
+def error_400(request, exception):
+        data = {}
+        return render(request,'errors/error400.html', data)
+def error_403(request, exception):
+        data = {}
+        return render(request,'errors/error403.html', data)
+def error_404(request, exception):
+        data = {}
+        return render(request,'errors/error404.html', data)
+def error_503(request, exception):
+        data = {}
+        return render(request,'errors/error503  .html', data)
+
 def index(request):
     achievement_list = Achievement.objects.all()
     if request.method == "GET":
@@ -13,6 +26,7 @@ def index(request):
             "achievement":achievement_list
         }
         return render(request, "base/index.html", content)
+        # return render(request,'errors/error503.html')
     elif request.method == "POST":
         searched_obj = []
         for i in achievement_list:
