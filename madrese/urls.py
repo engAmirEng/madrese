@@ -11,12 +11,12 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path("", include("base.urls")),
     path(
-    'accounts/nonstaff_password_reset',
-    auth_views.PasswordResetView.as_view(template_name='registration/nonstaff_password_reset.html'),
-    ),
-] 
-if settings.DEBUG == True:
-    urlpatterns += static(sett.MEDIA_URL, document_root=sett.MEDIA_ROOT)
+        'accounts/nonstaff_password_reset',
+        auth_views.PasswordResetView.as_view(template_name='registration/nonstaff_password_reset.html'),),
+]
+
+# urlpatterns += static(sett.MEDIA_URL, document_root=sett.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler400 = 'base.views.error_400'
 handler403 = 'base.views.error_403'
