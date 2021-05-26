@@ -1,10 +1,12 @@
 from .forms import StudentForm, AchievementForm
 from django.urls import reverse
-from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.http import Http404
 from .models import Achievement, Student
-
+from . import extentions
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.views.decorators.http import require_GET
 
 def error_400(request, exception):
         data = {}
@@ -25,7 +27,9 @@ def index(request):
         content = {
             "achievement":achievement_list
         }
-        return render(request, "base/index.html", content)
+        # return render(request, "base/index.html", content)
+        return render(request, "base/modiran_frame/index_detail.html", content)
+        # return render(request, "base/modiran_frame/update_form.html", content)
         # return render(request,'errors/error503.html')
     elif request.method == "POST":
         searched_obj = []
@@ -38,33 +42,30 @@ def index(request):
         content = {
             "achievement":searched_obj
         }
-        return render(request, "base/index.html", content)
+        return render(request, "base/modiran_frame/index_detail.html", content)
     else:
         return Http404
 
 
 def detail(request, id):
     content = {
-        "achievement":get_object_or_404(Achievement, id=id)
+        "achievement":get_object_or_404(Achievement, id=id),
     }
-    return render(request, "base/detail.html", content)
+    return render(request, "base/modiran_frame/index_detail.html", content)
 
-
+# @login_required
 def manage(request, model_name=""):
     achievement_list = Achievement.objects.all()
     student_list = Student.objects.all()
     content = {
         "achievement":achievement_list, "student":student_list
         }
+    content.update({"date":timezone.now()})
     if request.method == "GET":
-        if model_name == "achievement":
-            return render(request, "base/managing_achievement.html", content)
-        elif model_name == "student":
-            return render(request, "base/managing_student.html", content)
-        elif model_name == "index":
-            return render(request, "base/manage_index.html")
-        else:
+        if model_name != "achievement" and model_name != "student" and model_name != "index":
             return Http404
+        else:
+            return render(request, "base/modiran_frame/managing.html", content)
     elif request.method == "POST":
         searched_obj = []
         if model_name == "achievement":
@@ -78,7 +79,7 @@ def manage(request, model_name=""):
             content = {
                 "achievement":searched_obj
             }
-            return render(request, "base/managing_achievement.html", content)
+            return render(request, "base/modiran_frame/managing.html", content)
         elif model_name == "student":
             searched_year = int(request.POST["birthday"]) if request.POST["birthday"] else 1
             for i in student_list:
@@ -89,9 +90,10 @@ def manage(request, model_name=""):
             content = {
                 "student":searched_obj
             }
-            return render(request, "base/managing_student.html", content)
+            return render(request, "base/modiran_frame/managing.html", content)
 
-
+# @login_required
+@require_GET
 def delete(request, model_name, id):
     if model_name == "student":
         obj = get_object_or_404(Student, id=id)
@@ -101,8 +103,9 @@ def delete(request, model_name, id):
     obj.delete()
     return HttpResponseRedirect(reverse('base:manage', args=[model_name]))
 
-
+# @login_required
 def form(request, model_name, id):
+    request.POST._mutable = True
     massage = ""
     if request.method == "GET":
         if model_name == "student":
@@ -115,7 +118,7 @@ def form(request, model_name, id):
             }
         elif model_name == "new_student":
             content = {
-                "form":StudentForm()
+                "form":StudentForm(),
             }
         elif model_name == "achievement":
             obj = get_object_or_404(Achievement, id=id)
@@ -130,9 +133,13 @@ def form(request, model_name, id):
             content = {
                 "form":AchievementForm()
             }
-        return render(request,"base/update_form.html", content)
+        content.update({"date":timezone.now()})
+        return render(request,"base/modiran_frame/form.html", content)
     elif request.method == "POST":
         if model_name == "student":
+            jy, jm, jd = request.POST["birthday"].split("/")
+            miladi_y, miladi_m, miladi_d = extentions.jalali_to_gregorian(int(jy), int(jm) ,int(jd))
+            request.POST["birthday"] = f"{miladi_y}-{miladi_m}-{miladi_d}"
             filled_form = StudentForm(request.POST, request.FILES, instance=get_object_or_404(Student, id=id))
             if filled_form.is_valid():
                 filled_form.save()
@@ -140,6 +147,9 @@ def form(request, model_name, id):
             else:
                 massage = "خطا، اطلاعات وارد شده معتبر نمی باشد."
         elif model_name == "new_student":
+            jy, jm, jd = request.POST["birthday"].split("/")
+            miladi_y, miladi_m, miladi_d = extentions.jalali_to_gregorian(int(jy), int(jm) ,int(jd))
+            request.POST["birthday"] = f"{miladi_y}-{miladi_m}-{miladi_d}"
             filled_form = StudentForm(request.POST, request.FILES)
             if filled_form.is_valid():
                 filled_form.save()
