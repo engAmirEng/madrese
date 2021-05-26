@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'y3%68lw6@qat(9r*9m1txc$6wn&2xs77jz38d08rjxyo2%=_#&'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost', '127.0.0.1', "madrese.herokuapp.com"
