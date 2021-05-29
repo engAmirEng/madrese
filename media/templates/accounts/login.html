@@ -1,5 +1,6 @@
 {% extends 'partial/_baseview.html' %}
 {% load static %}
+{% block title %}ورود کاربر{% endblock title %}
 {% block content %}
 <!-- BEGIN LOEADING -->
 <div id="loader">
@@ -17,9 +18,10 @@
                 <div class="logo-con m-t-10 m-b-10">
                     <img src="{% static 'images/logo.png' %}" class="center-block img-responsive">
                 </div><!-- /.logo-con -->
+                {% include "partial/messages.html" %}
                 <h2 class="text-center m-b-20">وارد شوید</h2>
                 <hr>
-                <form id="form" class="m-t-30 m-b-30" action="dashboard.html" method="POST" role="form"> 
+                <form id="form" class="m-t-30 m-b-30" action="" method="POST" role="form"> 
                 {% csrf_token %}
                     <div class="form-group">
                         <label for="email" class="sr-only">نام کاربری</label>

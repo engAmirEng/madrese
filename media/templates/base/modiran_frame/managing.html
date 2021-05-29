@@ -1,5 +1,12 @@
 {% extends 'partial/_baseview2.html' %}
 {% load static %}
+
+{% block title %}
+{% if "student"  in request.path%}مدیریت|دانش آموزان
+{% elif "achievement" in request.path %}مدیریت|دست آورد ها 
+{% else %}مدیدیت{% endif %}
+{% endblock title %}
+
 {% block content %}
 
     <!-- BEGIN LOEADING -->
@@ -11,6 +18,8 @@
     <!-- BEGIN HEADER -->
     {% include "partial/header.html" %}
     <!-- END HEADER -->
+
+    {% include "partial/messages.html" %}
     
     <!-- BEGIN WRAPPER -->
     {% include "partial/start_manage.html" %}

@@ -13,12 +13,13 @@
             </form>
         </div><!-- /.search-box -->
         <div class="user-box">
-            <a href="#">
+            <!-- <a href="#">
                 <img src="assets/images/user/128.png" alt="عکس پروفایل" class="img-circle img-responsive">
-            </a>
+            </a> -->
             <div class="user-details">
-                <h4>حمید آفرینش فر</h4>
-                <p class="role">مدیر فنی</p>
+                <h4>{{ user.first_name }}
+                {{ user.last_name }}</h4>
+                <p class="role"></p>
                 <div class="dropdown user-login">
                     <button class="btn btn-xs btn-status dropdown-toggle btn-round" type="button" data-toggle="dropdown" data-hover="dropdown" aria-expanded="false">
                         <i class="fa fa-circle text-success"></i>

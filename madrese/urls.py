@@ -8,11 +8,12 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    # path(
+    #     'accounts/nonstaff_password_reset',
+    #     auth_views.PasswordResetView.as_view(template_name='registration/nonstaff_password_reset.html'),),
     path("", include("base.urls")),
-    path(
-        'accounts/nonstaff_password_reset',
-        auth_views.PasswordResetView.as_view(template_name='registration/nonstaff_password_reset.html'),),
+    path("accounts/", include("accounts.urls")),
 ]
 
 # urlpatterns += static(sett.MEDIA_URL, document_root=sett.MEDIA_ROOT)

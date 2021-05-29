@@ -1,5 +1,6 @@
 {% extends 'partial/_baseview2.html' %}
 {% load static %}
+{% block title %}{% if "detail" in request.path %}دست آورد ها|{{achievement.title}}{% else %}مدرسه | صفحه اصلی{% endif %}{% endblock title %}
 {% block content %}
     
     <!-- BEGIN LOEADING -->
@@ -9,6 +10,9 @@
     <!-- END LOEADING -->
 
 {% include "partial/header.html" %}
+
+{% include "partial/messages.html" %}
+
 
 <div class="table-responsive">
     <table class="table">
