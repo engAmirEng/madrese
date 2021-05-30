@@ -48,6 +48,7 @@ def register(request):
     elif request.method == "GET":
         return render(request, "accounts/register.html")
 
+
 @require_POST
 def logout(request):
     if request.method == "POST":

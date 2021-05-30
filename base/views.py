@@ -1,10 +1,10 @@
 from .forms import StudentForm, AchievementForm
 from django.urls import reverse
 from django.shortcuts import redirect, render, get_object_or_404, HttpResponseRedirect
-from django.http import Http404
+from django.http import Http404, request
 from .models import Achievement, Student
 from . import extentions
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django.contrib import messages
@@ -96,13 +96,15 @@ def manage(request, model_name=""):
 @login_required
 @require_GET
 def delete(request, model_name, id):
-    if model_name == "student":
-        obj = get_object_or_404(Student, id=id)
-    elif  model_name == "achievement":
-        obj = get_object_or_404(Achievement, id=id)
-
-    obj.delete()
-    messages.success(request, "با موفقیت حذف شد.")
+    if request.user.has_perm("base.delete_student"):
+        if model_name == "student":
+            obj = get_object_or_404(Student, id=id)
+        elif  model_name == "achievement":
+            obj = get_object_or_404(Achievement, id=id)
+        obj.delete()
+        messages.success(request, "با موفقیت حذف شد.")
+    else:
+        messages.error(request, "شما اجازه این عملیات را ندارید")
     return HttpResponseRedirect(reverse('base:manage', args=[model_name]))
 
 @login_required
