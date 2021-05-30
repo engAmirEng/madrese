@@ -35,16 +35,19 @@ def reg_validation(request):
 
 def register(request):
     if request.method == "POST":
-        if request != reg_validation(request):
-            request = reg_validation(request)
-        else:
-            user = User.objects.create_user(first_name=request.POST["first_name"], 
-                                            last_name=request.POST["last_name"], username=request.POST["username"], 
-                                            password=request.POST["password"]+"my_salt", 
-                                            email=request.POST["email"])
-            user.save()
-            messages.success(request, "ثبت نام شما با موفقیت ثبت شد")
-        return redirect("base:index")
+        request = reg_validation(request)
+        if request.POST["password"] == request.POST["confirm_password"]:
+            try:
+                user = User.objects.create_user(first_name=request.POST["first_name"], 
+                                                last_name=request.POST["last_name"], username=request.POST["username"], 
+                                                password=request.POST["password"]+"my_salt", 
+                                                email=request.POST["email"])
+                user.save()
+                messages.success(request, "ثبت نام شما با موفقیت ثبت شد")
+                return redirect("base:index")
+            except:
+                return redirect("accounts:register")
+        return redirect("accounts:register")
     elif request.method == "GET":
         return render(request, "accounts/register.html")
 
