@@ -1,13 +1,19 @@
+from django.db.models import fields
 from .forms import StudentForm, AchievementForm
 from django.urls import reverse
-from django.shortcuts import redirect, render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import redirect, render, get_object_or_404, get_list_or_404, HttpResponseRedirect
 from django.http import Http404, request
 from .models import Achievement, Student
 from . import extentions
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.contrib import messages
+
+def is_member(user, group_namme):
+    return user.groups.filter(name=f'{group_namme}').exists()
+
+
 
 def error_400(request, exception):
         data = {}
@@ -22,8 +28,10 @@ def error_503(request, exception):
         data = {}
         return render(request,'errors/error503  .html', data)
 
+
+@require_http_methods(["GET", "POST"])
 def index(request):
-    achievement_list = Achievement.objects.all()
+    achievement_list = get_list_or_404(Achievement, is_main=True)
     if request.method == "GET":
         content = {
             "achievement":achievement_list
@@ -44,8 +52,6 @@ def index(request):
             "achievement":searched_obj
         }
         return render(request, "base/modiran_frame/index_detail.html", content)
-    else:
-        return Http404
 
 
 def detail(request, id):
@@ -54,23 +60,83 @@ def detail(request, id):
     }
     return render(request, "base/modiran_frame/index_detail.html", content)
 
+
+@login_required
+@require_GET
+def confirm_deny(request, model_name, refId, id):
+    obj = get_object_or_404(Achievement, refrence_id=refId, id=id)
+    main_obj = get_object_or_404(Achievement, refrence_id=refId, is_main=True)
+    if "confirm" in model_name:
+        obj.modify_level=request.user.groups.all()[0].name
+        obj.is_main=True if request.user.groups.all()[0].name=="manager" else False
+        obj.save()
+        messages.success(request, "با موفقیت اعمال شد")
+        if request.user.groups.all()[0].name=="manager":
+            main_obj.delete()
+            messages.success(request, "با موفقیت جایگزین شد")
+    elif "deny" in model_name:
+        obj.delete()
+        messages.success(request, "درخواست تغییرات رد شد")
+    return redirect("base:confirm_deny")
+
+
 @login_required
 def manage(request, model_name=""):
-    achievement_list = Achievement.objects.all()
-    student_list = Student.objects.all()
-    content = {
-        "achievement":achievement_list, "student":student_list
-        }
-    content.update({"date":timezone.now()})
+    content = {}
     if request.method == "GET":
-        if model_name != "achievement" and model_name != "student" and model_name != "index":
-            return Http404
-        else:
-            return render(request, "base/modiran_frame/managing.html", content)
+        if model_name == "achievement":
+            content = {
+                "achievement": get_list_or_404(Achievement, is_main=True)
+                }
+        elif model_name == "student":
+            content = {
+                "student":Student.objects.all()
+                }
+        elif model_name == "index":
+            pass
+        elif model_name == "confirm_achievement":
+            if request.user.groups.all()[0].name == "manager":
+                content = {
+                    "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["manager", "mentor"])
+                    }
+            elif request.user.groups.all()[0].name == "mentor":
+                if request.user.has_perm("base.parvareshi_mentor"):
+                    content = {
+                        "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["mentor", "student"], 
+                        field="پرورشی")
+                        }
+                elif request.user.has_perm("base.pazhooheshi_mentor"):
+                    content = {
+                        "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["mentor", "student"], 
+                        field="پژوهشی")
+                        }
+                    print("gggggggggggggggggggggggg")
+                    print("gggggggggggggggggggggggg")
+                    print("gggggggggggggggggggggggg")
+                    print("gggggggggggggggggggggggg")
+                    print("gggggggggggggggggggggggg")
+                    print("gggggggggggggggggggggggg")
+                elif request.user.has_perm("base.varzeshi_mentor"):
+                    content = {
+                        "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["mentor", "student"], 
+                        field="ورزشی")
+                        }
+                elif request.user.has_perm("base.amoozeshi_mentor"):
+                    content = {
+                        "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["mentor", "student"], 
+                        field="آموزشی")
+                        }
+            elif request.user.groups.all()[0].name == "student":
+                    content = {
+                        "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["student"])
+                        }
+
+        content.update({"date":timezone.now()})
+        return render(request, "base/modiran_frame/managing.html", content)
     elif request.method == "POST":
         searched_obj = []
         if model_name == "achievement":
-            for i in achievement_list:
+            for i in get_list_or_404(Achievement, is_main=True):
                 if request.POST["owner"]  in f"{i.owner.first_name} + {i.owner.last_name}" and \
                     request.POST["title"] in i.title and request.POST["year"] in str(i.year) and \
                         request.POST["level"] in i.level and request.POST["field"] in i.field and \
@@ -83,7 +149,7 @@ def manage(request, model_name=""):
             return render(request, "base/modiran_frame/managing.html", content)
         elif model_name == "student":
             searched_year = int(request.POST["birthday"]) if request.POST["birthday"] else 1
-            for i in student_list:
+            for i in Student.objects.all():
                 birth = i.birthday.year if request.POST["birthday"] else 0
                 if request.POST["first_name"]  in i.first_name and (request.POST["last_name"])  in i.last_name and \
                     searched_year > birth:
@@ -124,7 +190,7 @@ def form(request, model_name, id):
                 "form":StudentForm(),
             }
         elif model_name == "achievement":
-            obj = get_object_or_404(Achievement, id=id)
+            obj = get_object_or_404(Achievement, refrence_id=id, is_main=True)
             initial = {
                 "owner":obj.owner, "title":obj.title, "year":obj.year, "field":obj.field, "level":obj.level, 
                 "dore":obj.dore, "video_link":obj.video_link, "detail":obj.detail, "pic":obj.pic
@@ -162,7 +228,11 @@ def form(request, model_name, id):
                 messages.error(request, "خطا، اطلاعات وارد شده معتبر نمی باشد.")
             return HttpResponseRedirect(reverse("base:form", kwargs={"model_name":model_name, "id":id}))
         elif model_name == "achievement":
-            filled_form = AchievementForm(request.POST, request.FILES, instance=get_object_or_404(Achievement, id=id))
+            request.POST["refrence_id"] = id
+            request.POST["modify_level"] = request.user.groups.all()[0].name
+            filled_form = AchievementForm(request.POST, request.FILES, \
+                                            # instance=get_object_or_404(Achievement, id=id)
+                                            )
             if filled_form.is_valid():
                 filled_form.save()
                 messages.success(request, "با موفقیت تغییر یافت.")
@@ -170,6 +240,8 @@ def form(request, model_name, id):
                 messages.error(request, "خطا، اطلاعات وارد شده معتبر نمی باشد.")
             return HttpResponseRedirect(reverse("base:manage", kwargs={"model_name":model_name}))
         elif model_name == "new_achievement":
+            request.POST["refrence_id"] = id
+            request.POST["modify_level"] = request.user.groups.all()[0].name
             filled_form = AchievementForm(request.POST, request.FILES)
             if filled_form.is_valid():
                 filled_form.save()

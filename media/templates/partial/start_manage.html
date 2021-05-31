@@ -17,6 +17,9 @@
                         {% elif 'achievement' in request.path%}
                             <li><a href="{% url 'base:manage' 'achievement' %}">دست آورد ها</a></li>
                         {% endif %}
+                        {% if 'confirm' in request.path %}
+                            <li><a href="">در انتظار تایید</a></li>
+                        {% endif %}
                         {% if 'new' in request.path %}
                             <li class="active">ثبت جدید</li>
                         {% elif 'form' in request.path %}

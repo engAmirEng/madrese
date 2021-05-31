@@ -37,5 +37,18 @@ class Achievement(models.Model):
     video_link = models.CharField(max_length=255, blank=True)
     detail = models.TextField(max_length=1024, blank=True)
 
+    refrence_id = models.IntegerField(null=True)
+    modify_level = models.CharField(choices=(("student", "student"), ("mentor", "mentor"), \
+                                            ("manager", "manager")), blank=True, max_length=50)
+    is_main = models.BooleanField(default=False)
+
+    class Meta:
+        permissions = (
+                        ("parvareshi_mentor", "can view parvareshi"),
+                        ("amoozeshi_mentor", "can view amoozeshi"),
+                        ("pazhooheshi_mentor", "can view pazhooheshi"),
+                        ("varzeshi_mentor", "can view varzeshi"),
+                        )
+
     def __str__(self):
         return(self.title)
