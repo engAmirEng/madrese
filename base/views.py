@@ -67,17 +67,24 @@ def confirm_deny(request, model_name, refId, id):
     obj = get_object_or_404(Achievement, refrence_id=refId, id=id)
     main_obj = get_object_or_404(Achievement, refrence_id=refId, is_main=True)
     if "confirm" in model_name:
-        obj.modify_level=request.user.groups.all()[0].name
-        obj.is_main=True if request.user.groups.all()[0].name=="manager" else False
-        obj.save()
-        messages.success(request, "با موفقیت اعمال شد")
-        if request.user.groups.all()[0].name=="manager":
+        if not obj.is_deleted:
+            obj.modify_level=request.user.groups.all()[0].name
+            obj.is_main=True if request.user.groups.all()[0].name=="manager" else False
+            obj.save()
+            main_obj.is_main = False if request.user.groups.all()[0].name=="manager" else True
+            main_obj.save()
+            messages.success(request, "با موفقیت اعمال شد")
+            if request.user.groups.all()[0].name=="manager":
+                main_obj.delete()
+                messages.success(request, "با موفقیت جایگزین شد")
+        elif obj.is_deleted:
+            obj.delete()
             main_obj.delete()
-            messages.success(request, "با موفقیت جایگزین شد")
+            messages.success(request, "با موفقیت اعمال شد")
     elif "deny" in model_name:
         obj.delete()
         messages.success(request, "درخواست تغییرات رد شد")
-    return redirect("base:confirm_deny")
+    return HttpResponseRedirect(reverse("base:manage", kwargs={"model_name":"confirm_achievement"}))
 
 
 @login_required
@@ -110,12 +117,6 @@ def manage(request, model_name=""):
                         "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["mentor", "student"], 
                         field="پژوهشی")
                         }
-                    print("gggggggggggggggggggggggg")
-                    print("gggggggggggggggggggggggg")
-                    print("gggggggggggggggggggggggg")
-                    print("gggggggggggggggggggggggg")
-                    print("gggggggggggggggggggggggg")
-                    print("gggggggggggggggggggggggg")
                 elif request.user.has_perm("base.varzeshi_mentor"):
                     content = {
                         "achievement": Achievement.objects.filter(is_main=False, modify_level__in=["mentor", "student"], 
@@ -162,15 +163,12 @@ def manage(request, model_name=""):
 @login_required
 @require_GET
 def delete(request, model_name, id):
-    if request.user.has_perm("base.delete_student"):
-        if model_name == "student":
-            obj = get_object_or_404(Student, id=id)
-        elif  model_name == "achievement":
-            obj = get_object_or_404(Achievement, id=id)
-        obj.delete()
-        messages.success(request, "با موفقیت حذف شد.")
-    else:
-        messages.error(request, "شما اجازه این عملیات را ندارید")
+    if model_name == "student":
+        obj = get_object_or_404(Student, id=id)
+    elif  model_name == "achievement":
+        obj = get_object_or_404(Achievement, refrence_id=id, is_main=True)
+        new_obj = Achievement(obj, is_deleted=True, modify_level=request.user.groups.all()[0].name)
+    messages.success(request, "درخواست با موفقیت ثبت شد")
     return HttpResponseRedirect(reverse('base:manage', args=[model_name]))
 
 @login_required

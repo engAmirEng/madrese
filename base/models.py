@@ -41,6 +41,7 @@ class Achievement(models.Model):
     modify_level = models.CharField(choices=(("student", "student"), ("mentor", "mentor"), \
                                             ("manager", "manager")), blank=True, max_length=50)
     is_main = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         permissions = (

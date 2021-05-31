@@ -79,6 +79,23 @@
             </div>
             <!-- /.input-group-->
           </div>
+          {% if "mentor" in request.path %}
+          <div class="form-group">
+            <label class="sr-only control-label" for="field_of_mentoring">شاخه مربی گری</label>
+            <div class="input-group round">
+              <span class="input-group-addon">
+                <i class="icon-user"></i>
+              </span>
+              <select class="form-control select2 round" name="field_of_mentoring" id="field_of_mentoring">
+                <option value="amoozeshi_mentor">آموزشی</option>
+                <option value="parvareshi_mentor">پرورشی</option>
+                <option value="varzeshi_mentor">ورزشی</option>
+                <option value="pazhooheshi_mentor">پژوهشی</option>
+              </select>
+            </div>
+            <!-- /.input-group-->
+          </div>
+          {% endif %}
           <!-- /.form-group -->
           <div class="form-group">
             <label class="sr-only control-label" for="email">رایانامه</label>

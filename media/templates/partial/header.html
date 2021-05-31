@@ -4,7 +4,7 @@
         <div class="top-bar">                        
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                    <li>                                
+                    <li>
                         <a href="javascript:{document.getElementById('logout').submit()}" class="btn open">
                             <div class="col-lg-4 col-md-6 col-12 icon-box" style="display: block;">
                                 <span class="item">
@@ -17,14 +17,28 @@
                     </li>
                 {% else %}
                     <li>                                
-                        <a href="{% url 'accounts:register' %}">
+                        <a href="{% url 'accounts:register' 'student' %}">
                             <div class="col-lg-4 col-md-6 col-12 icon-box" style="display: block;">
                             <div class="item"><i class="fa fa-user-plus" aria-hidden="true">
                             </i></div></div>
                         </a>
                     </li>
                     <li>                                
-                        <a href="{% url 'accounts:login' %}" class="btn open">
+                        <a href="{% url 'accounts:register' 'mentor' %}">
+                            <div class="col-lg-4 col-md-6 col-12 icon-box" style="display: block;">
+                            <div class="item"><i class="fa fa-user-plus" aria-hidden="true">
+                            </i></div></div>
+                        </a>
+                    </li>
+                    <li>                                
+                        <a href="{% url 'accounts:register' 'manager' %}">
+                            <div class="col-lg-4 col-md-6 col-12 icon-box" style="display: block;">
+                            <div class="item"><i class="fa fa-user-plus" aria-hidden="true">
+                            </i></div></div>
+                        </a>
+                    </li>
+                    <li>                                
+                        <a href="{% url 'accounts:login' %}" class="dropdown-toggle btn" data-toggle="dropdown">
                             <div class="col-lg-4 col-md-6 col-12 icon-box" style="display: block;">
                                 <span class="item">
                                     <span aria-hidden="true" class="icon-login">
