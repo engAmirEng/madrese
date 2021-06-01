@@ -17,7 +17,9 @@ urlpatterns = [
 ]
 
 # urlpatterns += static(sett.MEDIA_URL, document_root=sett.MEDIA_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler400 = 'base.views.error_400'
 handler403 = 'base.views.error_403'
