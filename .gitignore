@@ -55,7 +55,7 @@ __pycache__/
 # .nox/
 # .coverage
 # .coverage.*
-.cache
+# .cache
 # nosetests.xml
 # coverage.xml
 # *.cover
@@ -152,7 +152,7 @@ __pypackages__/
 Thumbs.db
 
 # profiling data
-.prof
+# .prof
 
 #vs code
 .vscode
