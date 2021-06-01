@@ -67,9 +67,9 @@ def confirm_deny(request, model_name, refId, id):
     obj = get_object_or_404(Achievement, refrence_id=refId, id=id)
     if "confirm" in model_name:
         if refId == 0:
-            obj.refrence_id = obj.id
             obj.modify_level = request.user.groups.all()[0].name
             obj.is_main = True if request.user.groups.all()[0].name == "manager" else False
+            obj.refrence_id = obj.id if request.user.groups.all()[0].name == "manager" else 0
             obj.save()
         elif not obj.is_deleted:
             main_obj = get_object_or_404(Achievement, refrence_id=refId, is_main=True)
