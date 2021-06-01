@@ -22,7 +22,7 @@ class Achievement(models.Model):
     f_CHOICES = (("پرورشی","پرورشی"), 
                 ("آموزشی","آموزشی"), 
                 ("پژوهشی","پژوهشی"), 
-                ("پژوهشی","ورزشی"))
+                ("ورزشی","ورزشی"))
     field = models.CharField(max_length=50, choices=f_CHOICES)
 
     v_CHOICES = (("مدرسه","مدرسه"), 

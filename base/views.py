@@ -65,19 +65,25 @@ def detail(request, id):
 @require_GET
 def confirm_deny(request, model_name, refId, id):
     obj = get_object_or_404(Achievement, refrence_id=refId, id=id)
-    main_obj = get_object_or_404(Achievement, refrence_id=refId, is_main=True)
     if "confirm" in model_name:
-        if not obj.is_deleted:
-            obj.modify_level=request.user.groups.all()[0].name
-            obj.is_main=True if request.user.groups.all()[0].name=="manager" else False
+        if refId == 0:
+            obj.refrence_id = obj.id
+            obj.modify_level = request.user.groups.all()[0].name
+            obj.is_main = True if request.user.groups.all()[0].name == "manager" else False
             obj.save()
-            main_obj.is_main = False if request.user.groups.all()[0].name=="manager" else True
+        elif not obj.is_deleted:
+            main_obj = get_object_or_404(Achievement, refrence_id=refId, is_main=True)
+            obj.modify_level = request.user.groups.all()[0].name
+            obj.is_main = True if request.user.groups.all()[0].name == "manager" else False
+            obj.save()
+            main_obj.is_main = False if request.user.groups.all()[0].name == "manager" else True
             main_obj.save()
             messages.success(request, "با موفقیت اعمال شد")
-            if request.user.groups.all()[0].name=="manager":
+            if request.user.groups.all()[0].name == "manager":
                 main_obj.delete()
                 messages.success(request, "با موفقیت جایگزین شد")
         elif obj.is_deleted:
+            main_obj = get_object_or_404(Achievement, refrence_id=refId, is_main=True)
             obj.delete()
             main_obj.delete()
             messages.success(request, "با موفقیت اعمال شد")
@@ -93,7 +99,7 @@ def manage(request, model_name=""):
     if request.method == "GET":
         if model_name == "achievement":
             content = {
-                "achievement": get_list_or_404(Achievement, is_main=True)
+                "achievement": Achievement.objects.filter(is_main=True)
                 }
         elif model_name == "student":
             content = {
@@ -166,8 +172,14 @@ def delete(request, model_name, id):
     if model_name == "student":
         obj = get_object_or_404(Student, id=id)
     elif  model_name == "achievement":
-        obj = get_object_or_404(Achievement, refrence_id=id, is_main=True)
-        new_obj = Achievement(obj, is_deleted=True, modify_level=request.user.groups.all()[0].name)
+        ref_obj = get_object_or_404(Achievement, refrence_id=id, is_main=True)
+        new_obj = Achievement(owner=ref_obj.owner, title=ref_obj.title, year=ref_obj.year, field=ref_obj.field, 
+                                level=ref_obj.level, dore=ref_obj.dore, pic=ref_obj.pic, video_link=ref_obj.video_link, 
+                                detail=ref_obj.detail, is_deleted=True, modify_level=request.user.groups.all()[0].name)
+    new_obj.refrence_id = ref_obj.refrence_id
+    new_obj.is_deleted = True
+    new_obj.modify_level = request.user.groups.all()[0].name
+    new_obj.save()
     messages.success(request, "درخواست با موفقیت ثبت شد")
     return HttpResponseRedirect(reverse('base:manage', args=[model_name]))
 
@@ -233,7 +245,7 @@ def form(request, model_name, id):
                                             )
             if filled_form.is_valid():
                 filled_form.save()
-                messages.success(request, "با موفقیت تغییر یافت.")
+                messages.success(request, "تغییرات با موفقیت ثبت و پس از تایید مسئول نهایی خواهد شد.")
             else:
                 messages.error(request, "خطا، اطلاعات وارد شده معتبر نمی باشد.")
             return HttpResponseRedirect(reverse("base:manage", kwargs={"model_name":model_name}))
@@ -243,7 +255,7 @@ def form(request, model_name, id):
             filled_form = AchievementForm(request.POST, request.FILES)
             if filled_form.is_valid():
                 filled_form.save()
-                messages.success(request, "دست آورد این دانش آموز با موفقیت اضافه شد.")
+                messages.success(request, "دست آورد این دانش آموز با موفقیت ثبت و پس از تایید مسول نهایی خواهد شد.")
             else:
                 messages.error(request, "خطا، اطلاعات وارد شده معتبر نمی باشد.")
             return HttpResponseRedirect(reverse("base:form", kwargs={"model_name":model_name, "id":id}))

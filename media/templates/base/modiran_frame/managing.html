@@ -90,6 +90,7 @@
                 {% if ar.pic %}<th><img src="{{ar.pic.url}}" alt=""></th>{% else %}<th> بارگذاری نشده </th>{% endif %}
                 {% if ar.video_link %}<th>{{ar.video_link}}</th>{% else %}<th> وارد نشده </th>{% endif %}
                 {% if ar.detail %}<th>{{ar.detail}}</th>{% else %}<th> وارد نشده </th>{% endif %}
+                <th><th> {% if ar.refrence_id == 0 %}جدید {% elif ar.is_deleted %}درخواست حذف{% endif %} </th></th>
                 <th><th> <a href="{% url 'base:confirm_deny' 'achievement_confirm' ar.refrence_id ar.id%}"
                             onclick="return confirm(' تغییرات تایید خواهند شد،ادامه؟')" class="btn btn-primary" 
                             role="button"> تایید تغییرات </a> </th></th>
